@@ -12,6 +12,7 @@ deAnalysis.r is the Rscript used for the DE analysis. It will try to resolve the
 Recommended Reference
 ================
 Reference Fasta   ftp://ftp.ensembl.org/pub/release-74/fasta/mus_musculus/dna/Mus_musculus.GRCm38.74.dna.primary_assembly.fa.gz
+
 Reference GTF     ftp://ftp.ensembl.org/pub/release-74/gtf/mus_musculus/Mus_musculus.GRCm38.74.gtf.gz
 
 
