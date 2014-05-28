@@ -19,5 +19,7 @@ Reference GTF     ftp://ftp.ensembl.org/pub/release-74/gtf/mus_musculus/Mus_musc
 Depending Softwares
 ================
 STAR          https://code.google.com/p/rna-star/
+
 htseq-count   http://www-huber.embl.de/users/anders/HTSeq/
+
 R             http://cran.r-project.org/
