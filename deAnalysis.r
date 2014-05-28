@@ -25,7 +25,7 @@ option_list <- list(
 	make_option(c("-c", "--clean"), action="store_true", default=FALSE, help="Remove no_feature, ambiguous, too_low_aQual, not_aligned, alignment_not_unique from the count matrix"),
 	make_option(c("-w", "--wgcna"), action="store_true", default=FALSE, help="Generate mean centered table for WGCNA"),
 	make_option(c("-s", "--spia"), action="store_true", default=FALSE, help="Perform SPIA analysis"),
-	make_option(c("-t", "--trans"), type="character", help="Table to transform count table identifier to Entrez id", metavar="file"),
+	make_option(c("-t", "--trans"), type="character", help="Table to transform count table identifier to Entrez id in tab deliminted format with headers start with #. Format should be <Identifier> <Entrez>. If it is not a one to one mapping, then the programme will randomly select one", metavar="file"),
 	make_option(c("-e", "--species"), type="character",default="mmu",  help="Animal species used for SPIA, allow hsa or mmu [default \"%default\"]"),
 	make_option(c("-d", "--dir"), type="character", help="Directory of the KEGG pathways", metavar="directory"),
 	make_option(c("-n", "--perm"), type="integer", default=1000, help="Number of permutation to perform [default \"%default\"]", metavar="number"),
@@ -196,7 +196,32 @@ if(opt$wgcna){
 }
 
 if(opt$SPIA){
-	if(is.na(opt$trans)){
+	if(is.null(opt$trans)){
 		#Not providing the translation table, will consider the row.name from inputTable to  be entrez id
+		All = row.names(resFilt);
+		DE = row.names(subset(resFilt, resFilt$bon <=0.05))
+	}else if(file.access(opt$trans) ==-1){
+		stop(sprintf("Count table (%s) does not exist\nWill not perform SPIA analysis", opt$inputFile));
+	} else{
+		entrez = read.csv(opt$trans,header=T);
+		colnames(entrez) = c("ID", "Entrez")
+		resFilt.entrez= merge(resFilt, entrez, by.x="row.names", by.y="ID");
+		All = unique(resFilt.entrez$Entrez);
+		resFilt.entrez = subset(resFilt.entrez, resFilt.entrez$bon <= 0.05)
+		DE = resFilt.entrez[!duplicated(resFilt.entrez$Entrez),]
 	}
+	DE_in=DE$log2FoldChange
+	names(DE_in)=as.vector(DE$Entrez)
+	if(is.null(opt$dir)){
+		res=spia(de=DE_in,all=All,organism=opt$species,nB=opt$perm,plots=FALSE,beta=NULL,combine="fisher",verbose=opt$verbose)
+	} else{
+		res=spia(de=DE_in,all=All,organism=opt$species,nB=opt$perm,plots=FALSE,beta=NULL,combine="fisher",verbose=opt$verbose, data.dir=opt$dir)
+	}
+	res$pG=combfunc(res$pNDE,res$pPERT,combine="norminv")
+	res$pGFdr=p.adjust(res$pG,"fdr")
+	res$pGFWER=p.adjust(res$pG,"bonferroni")
+	res=res[order(res$pGFWER),]
+	subset(res, res$pGFWER <=0.05)[,-12]
+	write.csv(res, paste(opt$out, ".spia.csv", sep=""))
 }
+

@@ -2,6 +2,7 @@
 ##############################################################################
 #
 # File   :  perSampleProcess.pl
+# Description: A script to generate scripts for RNA sequencing analysis
 # History:  27-May-2014 (sam) Code written
 #
 ##############################################################################
@@ -496,18 +497,19 @@ perl perlSampleProcess.pl [options]
 
 Options:
 
-  -sampleName
-  -first
-  -second
-  -ref
-  -gtf
-  -index
-  -star
-  -htseq
-  -lib
-  -length
-  -thread
-  -memory
+  -sampleName	Name of Sample, required if first and second not provided
+  -first	First read fastq file, required if sampleName not provided
+  -second	Second read fastq file, required if sampleName not provided
+  -ref		Reference Fasta file, required if require to build index
+  -gtf		GTF file containing splicing information, required
+  -index	STAR index directory, required
+  -star		STAR directory (default: PATH, if available)
+  -htseq	htseq_count directory (default: PATH, if available)
+  -samtools samtools directory (default: PATH, if available)
+  -strand	Whether if library is stranded or not (yes, no or reverse)
+  -length	Read length
+  -thread	Number of thread used
+  -memory	Max memory per thread used for samtools sort
   -help		brief help message
   -man		full documentation
 
@@ -590,9 +592,6 @@ Prints the manual page and exists.
 
 =back
 
-=head1 CAVEATS
-
-Problems
 
 =head1 ACKNOWLEDGEMENT
 

@@ -28,7 +28,7 @@ GetOptions('help|?|h' => \$help,
 
 pod2usage(1) if $help;
 pod2usage(-verbose => 2) if$man;
-pod2usage("$0: No samples given.") if ($sampleList ne "" && (@ARGV == 0) && (-t STDIN));
+pod2usage("$0: No samples given.") if ($sampleList eq "" && (@ARGV == 0) && (-t STDIN));
 
 if($output ne ""){
 	#Output provided
@@ -214,7 +214,8 @@ Options:
 
   -file     Provide file input of samples instead of through command line argument
   -remove   Remove the last 5 fields from the count matrix
-  -help		brief help message
+  -out      output file name (default: STDOUT)
+  -help		brief help message 
   -man		full documentation
   
 =head1 DESCRIPTION
