@@ -9,6 +9,8 @@ generateMatrix.pl is used after perSampleProcess.pl so that a count matrix can b
 
 deAnalysis.r is the Rscript used for the DE analysis. It will try to resolve the dependency wherever possible. 
 
+wgcna.r is the Rscript used for the WGCNA analysis. It will try to resolve the dependency wherever possible
+
 Recommended Reference
 ================
 Reference Fasta   ftp://ftp.ensembl.org/pub/release-74/fasta/mus_musculus/dna/Mus_musculus.GRCm38.74.dna.primary_assembly.fa.gz
