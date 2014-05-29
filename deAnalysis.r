@@ -105,7 +105,9 @@ print("sample information obtained, count table processed")
 #print(sampleInfo);
 
 if(opt$clean){
+	print(paste("Clean table. nrow before cleaning: ", nrow(inputTable), sep=""));
 	inputTable = inputTable[row.names(inputTable) %notin% c("no_feature", "ambiguous", "too_low_aQual", "not_aligned", "alignment_not_unique"),]
+	print(paste("Table cleansed. nrow after cleaning: ", nrow(inputTable), sep=""));
 }
 
 colData = data.frame(row.names=row.names(sampleInfo), condition=sampleInfo[,1])
@@ -114,11 +116,11 @@ colData(dds)$condition <- factor(colData(dds)$condition,levels=unique(sampleInfo
 #We will relevel to the first condition saw in the sample file. As a result of that, assuming control is the first condition observed, a positive logFC = increased expression in Cases w.r.t. Control
 colData(dds)$condition <- relevel(colData(dds)$condition,  as.character(sampleInfo[1,1]))
 dds <- estimateSizeFactors(dds)
-dds <- estimateDispersions(dds)
-dds <- nbinomWaldTest(dds)
+dds <- estimateDispersions(dds, quiet=!opt$verbose)
+dds <- nbinomWaldTest(dds, quiet=!opt$verbose)
 #To handle outliers, we use replaceOutliersWithTrimmedMean
 dds <- replaceOutliersWithTrimmedMean(dds) 
-dds <- DESeq(dds)
+dds <- DESeq(dds, quiet=!opt$verbose)
 res=results(dds)
 #We filter genes with read counts less than 10 and that has NA as p-value (outliers that DESeq2 prefer to provide NA)
 use <- res$baseMean >= 10 & !is.na(res$pvalue)
@@ -179,6 +181,7 @@ if(opt$plot){
 
 #WGCNA Mean centring
 if(opt$wgcna){
+	print("Performing mean centering")
 	if(! exists("vsd")){
 		vsd <- varianceStabilizingTransformation(dds, blind=TRUE)
 	}
@@ -192,10 +195,11 @@ if(opt$wgcna){
 		count.mean[i,6:10] = count[i,6:10]-mean(count[i,6:10]);
 	}
 	#Now the count.mean is ready for WGCNA analysis
-	write.csv(count.mean, paste(opt$out,"wgcna.csv", sep=""));
+	write.csv(count.mean, paste(opt$out,".wgcna.csv", sep=""));
+	print(paste("output table to ", opt$out, ".wgcna.csv", sep=""))
 }
 
-if(opt$SPIA){
+if(opt$spia){
 	if(is.null(opt$trans)){
 		#Not providing the translation table, will consider the row.name from inputTable to  be entrez id
 		All = row.names(resFilt);
