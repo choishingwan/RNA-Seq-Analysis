@@ -1,3 +1,10 @@
+# NOTE
+The code here uses the old RNA Seq pipeline. 
+Nowaday, it is better to use tools such as Salmon and tximport as suggested by the big names in RNA Seq. 
+For more details, you can read [here](https://www.bioconductor.org/help/course-materials/2016/CSAMA/lect-07-modern-rnaseq/ModernRNAseqAnalysis.pdf)
+
+
+
 RNA-Seq-Analysis
 ================
 
